@@ -128,7 +128,7 @@ jobs:
     serial: true
     plan:
       - aggregate:
-        - {trigger: true,  passed: [build-candidate], get: bosh-cpi-release, resource: bosh-cpi-dev-artifacts}
+        - {trigger: false,  passed: [build-candidate], get: bosh-cpi-release, resource: bosh-cpi-dev-artifacts}
         - {trigger: false, passed: [build-candidate], get: bosh-cpi-src, resource: bosh-cpi-src-in}
         - {trigger: false,  get: stemcell, resource: ubuntu-xenial-stemcell}
         - {trigger: false, get: aliyun-cli, resource: aliyun-cli}
@@ -159,7 +159,7 @@ jobs:
     serial: true
     plan:
       - aggregate:
-        - {get: cpi-release,     trigger: true,  resource: bosh-cpi-dev-artifacts, passed: [build-candidate]}
+        - {get: cpi-release,     trigger: false,  resource: bosh-cpi-dev-artifacts, passed: [build-candidate]}
         - {get: bosh-release,    trigger: false, resource: precompiled-bosh-releases}
         - {get: bosh-cpi-src,    trigger: false, resource: bosh-cpi-src-in, passed: [build-candidate]}
         - {get: stemcell,        trigger: false, resource: ubuntu-xenial-stemcell}
@@ -203,7 +203,7 @@ jobs:
     serial: true
     plan:
       - aggregate:
-        - {get: cpi-release,     trigger: true,  resource: bosh-cpi-dev-artifacts, passed: [build-candidate]}
+        - {get: cpi-release,     trigger: false,  resource: bosh-cpi-dev-artifacts, passed: [build-candidate]}
         - {get: bosh-release,    trigger: false, resource: precompiled-bosh-releases}
         - {get: bosh-cpi-src,    trigger: false, resource: bosh-cpi-src-in, passed: [build-candidate]}
         - {get: stemcell,        trigger: false, resource: ubuntu-xenial-stemcell}
@@ -266,8 +266,10 @@ jobs:
   - name: promote-candidate
     plan:
       - aggregate:
-        - {get: bosh-cpi-release,  trigger: false, resource: bosh-cpi-dev-artifacts, passed: [end-2-end, bats, integration]}
-        - {get: bosh-cpi-src, trigger: false, resource: bosh-cpi-src-in, passed: [end-2-end, bats, integration]}
+#        - {get: bosh-cpi-release,  trigger: false, resource: bosh-cpi-dev-artifacts, passed: [end-2-end, bats, integration]}
+#        - {get: bosh-cpi-src, trigger: false, resource: bosh-cpi-src-in, passed: [end-2-end, bats, integration]}
+        - {get: bosh-cpi-release,  trigger: true, resource: bosh-cpi-dev-artifacts}
+        - {get: bosh-cpi-src, trigger: false, resource: bosh-cpi-src-in}
         - {trigger: false, get: release-version-semver, params: {bump: major}}
         - {trigger: false, get: bosh-cli}
       - task: promote
@@ -314,8 +316,9 @@ resources:
   - name: bosh-cpi-src-out
     type: git
     source:
-      uri: git@github.com:xiaozhu/bosh-alicloud-cpi-release.git
-      branch: promote_release_artifacts
+      uri: git@github.com:xiaozhu36/bosh-alicloud-cpi-release.git
+#      branch: promote_release_artifacts
+      branch: ci
       private_key: {{github_bosh-alicloud-cpi-release_private-key}}
   - name: version-semver
     type: semver
@@ -341,6 +344,8 @@ resources:
       bucket:            {{oss_alicloud_cpi_pipeline_bucket}}
       access_key_id:     {{alicloud_access_key__primary}}
       secret_access_key: {{alicloud_secret_key__primary}}
+      region: {{oss_alicloud_cpi_pipeline_bucket_region}}
+      endpoint:          oss-((oss_alicloud_cpi_pipeline_bucket_region)).aliyuncs.com
   - name: bosh-cli
     type: s3
     source:
