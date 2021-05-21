@@ -434,7 +434,7 @@ func (a CreateVMMethod) UpdateAgentSettings(instId string, agentSettings registr
 	if err != nil {
 		txt, _ := json.Marshal(agentSettings)
 		a.Logger.Error("create_vm", "UpdateAgentSettings to registry failed %s json:%s", txt)
-		return bosherr.WrapErrorf(err, "UpdateAgentSettings failed %v \n\n ########## \n agentSettings: %s", client, txt)
+		return bosherr.WrapErrorf(err, "UpdateAgentSettings failed %v \n\n ########## \n agentSettings: %s 0000000000000000000\n", client, txt)
 	}
 
 	return nil
