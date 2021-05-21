@@ -72,11 +72,11 @@ func (a RegistryManager) Fetch(instanceID string) (registry.AgentSettings, error
 func (a RegistryManager) Update(instanceID string, settings registry.AgentSettings) error {
 	data, err := json.Marshal(settings)
 	if err != nil {
-		return err
+		return fmt.Errorf("json marshal settings got an error: %#v", err)
 	}
 	err = a.updateUserData(instanceID, data)
 	a.log("Update/"+instanceID, err, data, "")
-	return err
+	return fmt.Errorf("updateUserData got an error: %#v", err)
 }
 
 func (a RegistryManager) updateUserData(instanceID string, data []byte) error {
