@@ -6,6 +6,8 @@ package action
 import (
 	"bosh-alicloud-cpi/alicloud"
 	"bosh-alicloud-cpi/registry"
+
+	//"bosh-alicloud-cpi/registry"
 	"encoding/json"
 	"fmt"
 	"strings"
@@ -67,7 +69,7 @@ type CreateVMMethod struct {
 	instances alicloud.InstanceManager
 	disks     alicloud.DiskManager
 	networks  alicloud.NetworkManager
-	registry  registry.Client
+	registry  alicloud.RegistryManager
 }
 
 func NewCreateVMMethod(
@@ -76,7 +78,7 @@ func NewCreateVMMethod(
 	instances alicloud.InstanceManager,
 	disks alicloud.DiskManager,
 	networks alicloud.NetworkManager,
-	registry registry.Client) CreateVMMethod {
+	registry alicloud.RegistryManager) CreateVMMethod {
 	return CreateVMMethod{cc, stemcells, instances, disks, networks, registry}
 }
 

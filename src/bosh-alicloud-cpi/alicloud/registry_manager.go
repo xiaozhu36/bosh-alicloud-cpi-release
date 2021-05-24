@@ -76,7 +76,10 @@ func (a RegistryManager) Update(instanceID string, settings registry.AgentSettin
 	}
 	err = a.updateUserData(instanceID, data)
 	a.log("Update/"+instanceID, err, data, "")
-	return fmt.Errorf("updateUserData got an error:::::::::2 %#v", err)
+	if err != nil {
+		return fmt.Errorf("updateUserData got an error:::::::::2 %#v", err)
+	}
+	return err
 }
 
 func (a RegistryManager) updateUserData(instanceID string, data []byte) error {

@@ -5,7 +5,7 @@ package action
 
 import (
 	"bosh-alicloud-cpi/alicloud"
-	"bosh-alicloud-cpi/registry"
+	//"bosh-alicloud-cpi/registry"
 
 	boshlog "github.com/cloudfoundry/bosh-utils/logger"
 )
@@ -23,7 +23,7 @@ type Services struct {
 	Instances alicloud.InstanceManager
 	Disks     alicloud.DiskManager
 	Networks  alicloud.NetworkManager
-	Registry  registry.Client
+	Registry  alicloud.RegistryManager
 }
 
 func NewCallContext(input []byte, logger boshlog.Logger, config alicloud.Config) CallContext {
