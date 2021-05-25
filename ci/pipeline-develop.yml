@@ -113,7 +113,7 @@ jobs:
   serial: true
   plan:
   - aggregate:
-    - {get: cpi-release,     trigger: true,  resource: bosh-cpi-dev-artifacts, passed: [build-candidate]}
+    - {get: cpi-release,     trigger: false,  resource: bosh-cpi-dev-artifacts, passed: [build-candidate]}
     - {get: bosh-release,    trigger: false, resource: bosh-release}
     - {get: bosh-cpi-src,    trigger: false, resource: bosh-cpi-src-in, passed: [build-candidate]}
     - {get: stemcell,        trigger: false, resource: ubuntu-bionic-light-stemcell}
@@ -158,7 +158,7 @@ jobs:
   serial: true
   plan:
   - aggregate:
-    - {get: cpi-release,     trigger: true,  resource: bosh-cpi-dev-artifacts,   passed: [build-candidate]}
+    - {get: cpi-release,     trigger: false,  resource: bosh-cpi-dev-artifacts,   passed: [build-candidate]}
     - {get: bosh-release,    trigger: false, resource: bosh-release}
     - {get: bosh-cpi-src,    trigger: false, resource: bosh-cpi-src-in,          passed: [build-candidate]}
     - {get: stemcell,        trigger: false, resource: ubuntu-bionic-light-stemcell}
