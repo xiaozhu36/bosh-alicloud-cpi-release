@@ -38,15 +38,16 @@ type InstanceProps struct {
 	SystemDisk    DiskInfo          `json:"system_disk"`
 	Tags          map[string]string `json:"tags"`
 
-	Region               string                    `json:"region"`
-	AvailabilityZone     string                    `json:"availability_zone"`
-	InstanceName         string                    `json:"instance_name"`
-	InstanceType         string                    `json:"instance_type"`
-	SlbServerGroupWeight json.Number               `json:"slb_server_group_weight"`
-	SlbServerGroupPort   json.Number               `json:"slb_server_group_port"`
-	SlbServerGroup       []string                  `json:"slb_server_group"`
-	Slbs                 []string                  `json:"slbs"`
-	SlbWeight            json.Number               `json:"slb_weight"`
+	Region               string      `json:"region"`
+	AvailabilityZone     string      `json:"availability_zone"`
+	InstanceName         string      `json:"instance_name"`
+	InstanceType         string      `json:"instance_type"`
+	SlbServerGroupWeight json.Number `json:"slb_server_group_weight"`
+	SlbServerGroupPort   json.Number `json:"slb_server_group_port"`
+	SlbServerGroup       []string    `json:"slb_server_group"`
+	Slbs                 []string    `json:"slbs"`
+	SlbWeight            json.Number `json:"slb_weight"`
+	// Deprecated: NlbServerGroupWeight, NlbServerGroupPort, NlbServerGroupIds has been deprecated
 	NlbServerGroupWeight json.Number               `json:"nlb_server_group_weight"`
 	NlbServerGroupPort   json.Number               `json:"nlb_server_group_port"`
 	NlbServerGroupIds    []string                  `json:"nlb_server_group_ids"`
@@ -429,7 +430,21 @@ func (a CreateVMMethod) updateInstance(instCid string, associatedDiskCIDs []apiv
 			return bosherr.WrapErrorf(err, "bind %s to slbServerGroup %s failed,weight:%d,port:%d ", instCid, slbServerGroup, slbServerGroupWeight, slbServerGroupPort)
 		}
 	}
-	if len(instProps.NlbServerGroupIds) > 0 {
+	if len(instProps.NlbServerGroups) > 0 {
+		for _, group := range instProps.NlbServerGroups {
+			nlbServerGroupPort, err := group.Port.Int64()
+			if err != nil {
+				return bosherr.WrapErrorf(err, "invalid nlb_server_groups.port: '%v'. Error", group.Port)
+			}
+			nlbServerGroupWeight, err := group.Weight.Int64()
+			if err != nil {
+				return bosherr.WrapErrorf(err, "invalid nlb_server_groups.weight: '%v'. Error", group.Weight)
+			}
+			if err := a.networks.BindNlbServerGroup(instProps.Region, instCid, group.ServerGroupId, int(nlbServerGroupWeight), int(nlbServerGroupPort)); err != nil {
+				return bosherr.WrapErrorf(err, "bind %s to nlbServerGroup %s failed, weight: %d, port: %d.", instCid, group.ServerGroupId, nlbServerGroupWeight, nlbServerGroupPort)
+			}
+		}
+	} else if len(instProps.NlbServerGroupIds) > 0 {
 		nlbServerGroupPort, err := instProps.NlbServerGroupPort.Int64()
 		if err != nil {
 			return bosherr.WrapErrorf(err, "invalid nlb_server_group_port: '%v'. Error", instProps.NlbServerGroupPort)

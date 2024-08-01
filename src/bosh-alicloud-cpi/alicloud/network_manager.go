@@ -175,6 +175,9 @@ func (a NetworkManagerImpl) BindSlbServerGroup(region, instanceId string, slbSer
 }
 
 func (a NetworkManagerImpl) BindNlbServerGroup(region, instanceId string, nlbServerGroupId string, weight int, port int) error {
+	if nlbServerGroupId == "" {
+		return fmt.Errorf("missing nlb server_group_id when binding vm to nlb server group")
+	}
 	conn, err := a.config.NlbTeaClient(region)
 	if err != nil {
 		return err

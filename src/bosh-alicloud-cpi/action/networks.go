@@ -5,6 +5,7 @@ package action
 
 import (
 	"bosh-alicloud-cpi/registry"
+	"encoding/json"
 	"fmt"
 
 	bosherr "github.com/cloudfoundry/bosh-utils/errors"
@@ -31,9 +32,9 @@ type NetworkProps struct {
 	InternetChargeType string   `json:"internet_charge_type,omitempty"`
 }
 type NlbServerGroupProps struct {
-	ServerGroupId string   `json:"server_group_id"`
-	Port          []string `json:"port"`
-	Weight        string   `json:"weight"`
+	ServerGroupId string      `json:"server_group_id"`
+	Port          json.Number `json:"port"`
+	Weight        json.Number `json:"weight"`
 }
 
 func NewNetworks(args apiv1.Networks) (Networks, error) {
